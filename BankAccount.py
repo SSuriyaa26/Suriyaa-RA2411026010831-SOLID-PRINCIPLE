@@ -205,3 +205,9 @@ class BankAccount:
 
     def has_pin(self):
         return self.pin is not None
+"""
+Wrap up
+Ended up with 4 classes including the BankAccount class originally given, and an additional main . 
+This makes it easier to test since if there is an issue with a specific class/service or feature
+we can test only that specific class without affecting the rest of the program.
+"""
