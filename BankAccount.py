@@ -1,3 +1,5 @@
+from NotificationService import NotificationService
+from AccountRepository import AccountRepository
 """
 REASON TO CHANGE:
 1)Interest calculation may change in the future,maybe more account types are added with diffrent values aswell
@@ -49,6 +51,9 @@ class BankAccount:
         # Python equivalent is a list
         self.transaction_log = []
 
+        # Persistence handled by AccountRepository
+        self.repository = AccountRepository()
+        self.notification = NotificationService()
     # ----------------------------------------------------
     # Account operations, tangled with logging + notification
     # ----------------------------------------------------
@@ -71,14 +76,13 @@ class BankAccount:
         )
 
         # Notification responsibility
-        self.send_email(
-            self.name,
+        self.notification.send_email(
             f"Your deposit of Rs. {amount} was successful. "
             f"New balance: {self.balance}"
         )
 
         # Persistence responsibility
-        self.save_to_database()
+        self.repository.save(self)
 
         return True
 
@@ -112,13 +116,12 @@ class BankAccount:
             f"WITHDRAW: Rs. {amount} | New balance: {self.balance}"
         )
 
-        self.send_email(
-            self.name,
+        self.notification.send_email(
             f"Your withdrawal of Rs. {amount} was successful. "
             f"New balance: {self.balance}"
         )
 
-        self.save_to_database()
+        self.repository.save(self)
 
         return True
 
@@ -129,12 +132,11 @@ class BankAccount:
 
         self.status = "Inactive"
 
-        self.send_email(
-            self.name,
+        self.notification.send_email(
             "Your account has been closed."
         )
 
-        self.save_to_database()
+        self.repository.save(self)
 
         return True
 
@@ -144,13 +146,8 @@ class BankAccount:
             return False
 
         self.status = "Active"
-
-        self.send_email(
-            self.name,
-            "Your account has been reopened."
-        )
-
-        self.save_to_database()
+        self.notification.send_email(  "Your account has been reopened.")
+        self.repository.save(self)
 
         return True
 
@@ -180,28 +177,6 @@ class BankAccount:
 
         else:
             return 0.0
-
-    # ----------------------------------------------------
-    # Persistence
-    # ----------------------------------------------------
-
-    def save_to_database(self):
-
-        # Pretend this talks to MySQL
-        print(
-            f"[DB] Saving account {self.account_number} to MySQL..."
-        )
-
-    # ----------------------------------------------------
-    # Notification
-    # ----------------------------------------------------
-
-    def send_email(self, recipient, message):
-
-        # Pretend this talks to an SMTP server
-        print(
-            f"[EMAIL] To: {recipient} | {message}"
-        )
 
     # ----------------------------------------------------
     # Statement generation
