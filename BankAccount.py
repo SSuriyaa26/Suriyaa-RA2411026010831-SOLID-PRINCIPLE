@@ -7,6 +7,16 @@ REASON TO CHANGE:
 5)changes if email provider changes
 6)changes if DB changes
 """
+
+
+"""
+Responsibility of account class:
+-check balance
+-Increase balance (deposit)
+-Check if depisit amount is not negative etc
+-Decrease balance (withdraw)
+-Check that balance is >= withdraw etc
+"""
 class BankAccount:
 
     def __init__(self, account_number, name, age, balance, account_type):
