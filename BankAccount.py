@@ -1,24 +1,7 @@
-from NotificationService import NotificationService
 from AccountRepository import AccountRepository
-"""
-REASON TO CHANGE:
-1)Interest calculation may change in the future,maybe more account types are added with diffrent values aswell
-2)Minimum balance could change
-3)PIN may change to password or passkey
-4)other modes of notification  like SMS or OTP service
-5)changes if email provider changes
-6)changes if DB changes
-"""
+from NotificationService import NotificationService
+from StatementGenerator import StatementGenerator
 
-
-"""
-Responsibility of account class:
--check balance
--Increase balance (deposit)
--Check if depisit amount is not negative etc
--Decrease balance (withdraw)
--Check that balance is >= withdraw etc
-"""
 class BankAccount:
 
     def __init__(self, account_number, name, age, balance, account_type):
@@ -51,9 +34,12 @@ class BankAccount:
         # Python equivalent is a list
         self.transaction_log = []
 
-        # Persistence handled by AccountRepository
         self.repository = AccountRepository()
+
         self.notification = NotificationService()
+
+        self.statement_generator = StatementGenerator()
+
     # ----------------------------------------------------
     # Account operations, tangled with logging + notification
     # ----------------------------------------------------
@@ -77,6 +63,7 @@ class BankAccount:
 
         # Notification responsibility
         self.notification.send_email(
+            self.name,
             f"Your deposit of Rs. {amount} was successful. "
             f"New balance: {self.balance}"
         )
@@ -117,6 +104,7 @@ class BankAccount:
         )
 
         self.notification.send_email(
+            self.name,
             f"Your withdrawal of Rs. {amount} was successful. "
             f"New balance: {self.balance}"
         )
@@ -133,6 +121,7 @@ class BankAccount:
         self.status = "Inactive"
 
         self.notification.send_email(
+            self.name,
             "Your account has been closed."
         )
 
@@ -146,7 +135,12 @@ class BankAccount:
             return False
 
         self.status = "Active"
-        self.notification.send_email(  "Your account has been reopened.")
+
+        self.notification.send_email(
+            self.name,
+            "Your account has been reopened."
+        )
+
         self.repository.save(self)
 
         return True
@@ -178,25 +172,14 @@ class BankAccount:
         else:
             return 0.0
 
+
+
     # ----------------------------------------------------
     # Statement generation
     # ----------------------------------------------------
 
     def print_statement(self):
-
-        print(
-            f"---- Statement for Account #{self.account_number} "
-            f"({self.name}) ----"
-        )
-
-        for entry in self.transaction_log:
-            print(entry)
-
-        print(f"Current Balance: Rs. {self.balance}")
-
-        print(
-            "-----------------------------------------------------"
-        )
+        self.statement_generator.generate(self)
 
     # ----------------------------------------------------
     # Getters
