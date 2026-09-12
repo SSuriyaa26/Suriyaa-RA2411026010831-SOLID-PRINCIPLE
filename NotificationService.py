@@ -4,5 +4,5 @@ class NotificationService:
 
         # Pretend this talks to an SMTP server
         print(
-            f"[EMAIL] To: {recipient} | {message}"
+            "Sending: ..."
         )
