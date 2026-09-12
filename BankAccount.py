@@ -1,3 +1,12 @@
+"""
+REASON TO CHANGE:
+1)Interest calculation may change in the future,maybe more account types are added with diffrent values aswell
+2)Minimum balance could change
+3)PIN may change to password or passkey
+4)other modes of notification  like SMS or OTP service
+5)changes if email provider changes
+6)changes if DB changes
+"""
 class BankAccount:
 
     def __init__(self, account_number, name, age, balance, account_type):
