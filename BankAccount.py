@@ -160,7 +160,9 @@ class BankAccount:
     # ----------------------------------------------------
     # Interest calculation
     # ----------------------------------------------------
-
+    """
+    The code below will be edited so when new interest types are added
+    """
     def calculate_interest(self):
 
         if self.account_type == "Savings":
